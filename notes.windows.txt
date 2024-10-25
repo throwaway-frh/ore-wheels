@@ -1,0 +1,166 @@
+
+# github
+SET DEMO_BOOST_ROOT=C:\repos\boost\boost_1_72_0
+SET DEMO_BOOST_LIB=C:\repos\boost\boost_1_72_0\lib64-msvc-14.2
+SET DEMO_SWIG_DIR=C:\repos\swigwin\swigwin-4.1.1
+SET DEMO_ORE_DIR=C:\repos\ore.github
+SET DEMO_ORE_SWIG_DIR=C:\repos\oreswig.github
+SET DEMO_ZLIB_ROOT=C:\repos\vcpkg\packages\zlib_x64-windows
+
+# gitlab - oreplus
+SET DEMO_BOOST_ROOT=C:\repos\boost\boost_1_72_0
+SET DEMO_BOOST_LIB=C:\repos\boost\boost_1_72_0\lib64-msvc-14.2
+SET DEMO_SWIG_DIR=C:\repos\swigwin\swigwin-4.1.1
+SET DEMO_ORE_DIR=C:\repos\oreplus\ore
+SET DEMO_ORE_SWIG_DIR=C:\repos\oreswig.gitlab
+SET DEMO_ZLIB_ROOT=C:\repos\vcpkg\packages\zlib_x64-windows
+
+# gitlab - ore
+SET DEMO_BOOST_ROOT=C:\repos\boost\boost_1_72_0
+SET DEMO_BOOST_LIB=C:\repos\boost\boost_1_72_0\lib64-msvc-14.2
+SET DEMO_SWIG_DIR=C:\repos\swigwin\swigwin-4.1.1
+SET DEMO_ORE_DIR=C:\repos\ore.gitlab
+SET DEMO_ORE_SWIG_DIR=C:\repos\oreswig.gitlab
+SET DEMO_ZLIB_ROOT=C:\repos\vcpkg\packages\zlib_x64-windows
+
+# generate wrapper for oreswig zip file
+SET DEMO_BOOST_ROOT=C:\repos\boost\boost_1_72_0
+SET DEMO_BOOST_LIB=C:\repos\boost\boost_1_72_0\lib64-msvc-14.2
+SET DEMO_SWIG_DIR=C:\repos\swigwin\swigwin-4.1.1
+SET DEMO_ORE_DIR=C:\repos\ore.github
+SET DEMO_ORE_SWIG_DIR=C:\erik\wheels\zipfiles\oreswig
+
+SET DEMO_ZLIB_ROOT=C:\repos\zlib\zlib-1.2.13
+
+# ore - configure
+
+cd %DEMO_ORE_DIR%
+mkdir build
+cd %DEMO_ORE_DIR%\build
+SET BOOST_INCLUDEDIR=%DEMO_BOOST_ROOT%
+SET BOOST_LIBRARYDIR=%DEMO_BOOST_LIB%
+SET ZLIB_ROOT=%DEMO_ZLIB_ROOT%
+cmake -DBoost_NO_WARN_NEW_VERSIONS=1 -Wno-dev -G "Visual Studio 17 2022" -A x64 ..
+cmake -DBoost_NO_WARN_NEW_VERSIONS=1 -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DMSVC_LINK_DYNAMIC_RUNTIME=OFF 
+cmake -DBoost_NO_WARN_NEW_VERSIONS=1 -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DMSVC_LINK_DYNAMIC_RUNTIME=OFF -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF
+cmake -DBoost_NO_WARN_NEW_VERSIONS=1 -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DMSVC_LINK_DYNAMIC_RUNTIME=OFF -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DORE_USE_ZLIB=ON
+cmake -DBoost_NO_WARN_NEW_VERSIONS=1 -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DMSVC_LINK_DYNAMIC_RUNTIME=OFF -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DORE_USE_ZLIB=ON -DQL_ENABLE_SESSIONS=ON
+-> %DEMO_ORE_DIR%\build\ORE.sln
+
+# ore - build
+
+cd %DEMO_ORE_DIR%\build
+cmake --build . --config Release
+cmake --build . --config Debug
+-> %DEMO_ORE_DIR%\build\OREAnalytics\orea\Release\OREAnalytics-x64-mt.lib
+
+# oreswig - cmake
+
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python
+mkdir build2
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build2
+SET BOOST_INCLUDEDIR=%DEMO_BOOST_ROOT%
+SET BOOST_LIBRARYDIR=%DEMO_BOOST_LIB%
+SET SWIG_ROOT=%DEMO_SWIG_DIR%
+SET ZLIB_ROOT=%DEMO_ZLIB_ROOT%
+cmake -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DORE=%DEMO_ORE_DIR%
+cmake -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DORE=%DEMO_ORE_DIR% -DMSVC_LINK_DYNAMIC_RUNTIME=OFF 
+cmake -Wno-dev -G "Visual Studio 17 2022" -A x64 .. -DORE=%DEMO_ORE_DIR% -DMSVC_LINK_DYNAMIC_RUNTIME=OFF -DORE_USE_ZLIB=ON
+cmake --build . --config Release
+cmake --build . --config Debug
+
+# use the wrapper
+
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\Examples
+
+SET PYTHONPATH=%DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build2;%DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build2\Release
+SET PYTHONPATH=%DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build2;%DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build2\Debug
+
+python swap.py
+
+# oreswig - setup.py
+
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python
+SET BOOST_ROOT=%DEMO_BOOST_ROOT%
+SET BOOST_LIB=%DEMO_BOOST_LIB%
+SET ORE_DIR=%DEMO_ORE_DIR%
+SET PATH=%PATH%;%DEMO_SWIG_DIR%
+SET ORE_STATIC_RUNTIME=1
+SET ORE_USE_ZLIB=1
+python setup.py wrap
+python setup.py build
+python setup.py test
+python -m build --wheel
+
+cl : Command line warning D9025 : overriding '/MD' with '/MT'
+
+# use the wrapper
+
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\Examples
+SET PYTHONPATH=%DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\build\lib.win-amd64-cpython-310
+python swap.py
+
+# use the wheel
+
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\Examples
+python -m venv env1
+.\env1\Scripts\activate.bat
+pip install %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\dist\open_source_risk_engine-1.8.10-cp310-cp310-win_amd64.whl
+python swap.py
+deactivate
+rmdir /s /q env1
+
+# GITHUB ACTIONS ('g)
+
+# make the source zip file
+:: pip install git-archive-all
+cd %DEMO_ORE_DIR%
+git-archive-all ore.zip
+move ore.zip C:\erik\wheels\zipfiles
+cd %DEMO_ORE_SWIG_DIR%
+git-archive-all oreswig.zip
+move oreswig.zip C:\erik\wheels\zipfiles
+
+# run the wrapper
+cd C:\erik\wheels\zipfiles\oreswig\OREAnalytics-SWIG\Python
+SET PATH=%PATH%;%DEMO_SWIG_DIR%
+python setup.py wrap
+
+=========
+https://test.pypi.org/
+=========
+
+# UPLOAD
+C:\Users\eric.ehlers\.pypirc
+#python -m pip install --upgrade pip
+#python -m pip install --upgrade twine
+cd C:\erik\projects\wheel\wheels\ore
+python -m twine upload --repository test *.whl
+twine upload -r test *.whl
+
+got this error:
+KeyError: 'repository'
+needed to add "repository" line to .pypirc file
+
+# INSTALL
+pip install -i https://test.pypi.org/simple/ open-source-risk-engine
+
+=========
+https://pypi.org/
+=========
+
+# UPLOAD
+cd C:\erik\wheels\wheels\1.8.9.2
+#twine upload -r pypi --sign xxx
+twine upload -r pypi *.whl
+
+# INSTALL
+cd %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\Examples
+python -m venv env1
+.\env1\Scripts\activate.bat
+pip install %DEMO_ORE_SWIG_DIR%\OREAnalytics-SWIG\Python\dist\OREAnalytics_Python-1.8.3.2-cp310-cp310-win_amd64.whl
+pip install open-source-risk-engine
+python swap.py
+deactivate
+rmdir /s /q env1
+

@@ -1,0 +1,137 @@
+
+# github
+DEMO_BOOST_INC=/home/erik/repos/boost/install2/include
+DEMO_BOOST_LIB=/home/erik/repos/boost/install2/lib
+DEMO_ORE_DIR=/home/erik/repos/ore.github
+DEMO_ORE_SWIG_DIR=/home/erik/repos/oreswig.github
+DEMO_ZLIB_ROOT=/home/erik/repos/zlib/zlib-1.2.13
+
+# oreplus
+DEMO_BOOST_INC=/home/erik/repos/boost/install2/include
+DEMO_BOOST_LIB=/home/erik/repos/boost/install2/lib
+DEMO_ORE_DIR=/home/erik/repos/oreplus/ore
+DEMO_ORE_SWIG_DIR=/home/erik/repos/oreswig
+DEMO_ZLIB_ROOT=/home/erik/repos/zlib/zlib-1.2.13
+
+DEMO_BOOST_INC=/usr/include
+DEMO_BOOST_LIB=/usr/lib/x86_64-linux-gnu
+
+# ore - configure
+
+cd $DEMO_ORE_DIR
+mkdir build
+cd $DEMO_ORE_DIR/build
+export BOOST_INCLUDEDIR=$DEMO_BOOST_INC
+export BOOST_LIBRARYDIR=$DEMO_BOOST_LIB
+export ZLIB_ROOT=%DEMO_ZLIB_ROOT%
+#cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DBoost_NO_WARN_NEW_VERSIONS=1 -DBoost_NO_SYSTEM_PATHS=1
+#cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DBoost_NO_WARN_NEW_VERSIONS=1 -DBoost_NO_SYSTEM_PATHS=1 -DORE_USE_ZLIB=ON
+cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DBoost_NO_WARN_NEW_VERSIONS=1 -DBoost_NO_SYSTEM_PATHS=1 -DORE_USE_ZLIB=ON -DQL_ENABLE_SESSIONS=OFF
+
+# ore - build
+
+cd $DEMO_ORE_DIR/build
+cmake --build .
+
+# oreswig - cmake
+
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python
+mkdir build2
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/build2
+export BOOST_INCLUDEDIR=$DEMO_BOOST_INC
+export BOOST_LIBRARYDIR=$DEMO_BOOST_LIB
+export ZLIB_ROOT=$DEMO_ZLIB_ROOT
+cmake .. -DORE=$DEMO_ORE_DIR
+cmake .. -DORE=$DEMO_ORE_DIR -DORE_USE_ZLIB=ON
+cmake --build .
+
+# Use the wrapper
+
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/Examples
+export PYTHONPATH=$DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/build2
+export LD_LIBRARY_PATH=$DEMO_ORE_DIR/build/OREAnalytics/orea:$DEMO_ORE_DIR/build/OREData/ored:$DEMO_ORE_DIR/build/QuantExt/qle:$DEMO_ORE_DIR/build/QuantLib/ql:$DEMO_BOOST_LIB
+python3 swap.py
+
+# oreswig - setup.py
+
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python
+export BOOST_INC=$DEMO_BOOST_INC
+export BOOST_LIB=$DEMO_BOOST_LIB
+export ORE=$DEMO_ORE_DIR
+export ORE_USE_ZLIB=1
+python3 setup.py wrap
+python3 setup.py build
+python3 -m build --wheel
+
+-DBoost_USE_MULTITHREADED=OFF
+
+# Use the wrapper
+
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/Examples
+export PYTHONPATH=$DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/build/lib.linux-x86_64-3.10/ORE
+export LD_LIBRARY_PATH=$DEMO_ORE_DIR/build/OREAnalytics/orea:$DEMO_ORE_DIR/build/OREData/ored:$DEMO_ORE_DIR/build/QuantExt/qle:$DEMO_ORE_DIR/build/QuantLib/ql:$DEMO_BOOST_LIB
+python3 swap.py
+
+# Use the wheel
+
+cd $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/Examples
+python3 -m venv env1
+. ./env1/bin/activate
+pip install $DEMO_ORE_SWIG_DIR/OREAnalytics-SWIG/Python/dist/osre-1.8.9.1-cp310-cp310-linux_x86_64.whl
+python3 swap.py
+deactivate
+rm -rf env1
+
+# GITHUB ACTIONS ('g)
+
+# make the source zip file
+#pip install git-archive-all
+cd $DEMO_ORE_DIR
+git-archive-all ore.tgz
+mv ore.tgz /home/erik/projects/wheels/tarballs
+cd $DEMO_ORE_SWIG_DIR
+git-archive-all oreswig.tgz
+mv oreswig.tgz /home/erik/projects/wheels/tarballs
+
+# run the wrapper
+cd /home/erik/projects/wheels/tarballs/oreswig/OREAnalytics-SWIG/Python
+python3 setup.py wrap
+
+=========
+https://test.pypi.org/
+=========
+
+# UPLOAD - LINUX
+/home/erik/.pypirc
+#python3 -m pip install --upgrade pip
+#python3 -m pip install --upgrade twine
+cd /home/erik/quaternion/wheels
+python3 -m twine upload --repository testpypi *.whl
+
+# INSTALL - LINUX
+cd /home/erik/repos/oreswig.github/OREAnalytics-SWIG/Python/Examples
+python3 -m venv env1
+. ./env1/bin/activate
+#pip install /home/erik/quaternion/wheels/OREAnalytics_Python-1.8.3.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+pip install -i https://test.pypi.org/simple/ open-source-risk-engine
+python3 swap.py
+deactivate
+rm -rf env1
+
+=========
+https://pypi.org/
+=========
+
+# UPLOAD - LINUX
+cd /home/erik/quaternion/wheels2
+twine upload -r pypi *whl
+
+# INSTALL - LINUX
+cd /home/erik/repos/oreswig.github/OREAnalytics-SWIG/Python/Examples
+python3 -m venv env1
+. ./env1/bin/activate
+pip install open-source-risk-engine
+python3 swap.py
+deactivate
+rm -rf env1
+
