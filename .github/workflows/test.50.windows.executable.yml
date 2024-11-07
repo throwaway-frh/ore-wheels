@@ -1,0 +1,62 @@
+name: Build 50 - ORE Windows Exeutable
+
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        include:
+          - arch: x86
+            platform: Win32
+            boost-lib: 32
+          - arch: AMD64
+            platform: x64
+            boost-lib: 64
+    steps:
+    - uses: actions/checkout@v3
+    - name: zlib
+      run: |
+        $Url = "https://www.zlib.net/zlib131.zip"
+        (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\zlib.zip")
+        Expand-Archive -Path "$env:TEMP\zlib.zip" -DestinationPath C:\local
+        cd C:\local\zlib-1.3.1
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . --config Release
+    - name: eigen
+      run: |
+        $Url = "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip"
+        (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\eigen.zip")
+        Expand-Archive -Path "$env:TEMP\eigen.zip" -DestinationPath C:\local
+        cd C:\local\eigen-3.4.0
+        mkdir build
+        cd build
+        cmake ..
+    - name: Build Boost
+      run: |
+        $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.80.0/binaries/boost_1_80_0-msvc-14.3-${{ matrix.boost-lib }}.exe"
+        (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
+        Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=C:\local\boost"
+    - name: Build ORE
+      env:
+        Boost_ROOT: C:\local\boost
+      run: |
+        Expand-Archive -Path ore.zip -DestinationPath C:\local
+        cd C:\local\ore
+        mkdir build
+        cd build
+        SET ZLIB_ROOT=C:\local\zlib-1.3.1
+        SET Eigen3_DIR=C:\local\eigen-3.4.0
+        dir C:\local\zlib-1.3.1\build\Release
+        cmake -DORE_BUILD_DOC=ON -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=ON -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DCMAKE_BUILD_TYPE=Release -DMSVC_LINK_DYNAMIC_RUNTIME=OFF -DORE_USE_ZLIB=ON -DQL_ENABLE_SESSIONS=ON -DZLIB_LIBRARY=C:\local\zlib-1.3\build\Release\zlib.lib -G "Visual Studio 17 2022" -A ${{ matrix.platform }} ..
+        cmake --build . --config Release --verbose
+
+        # switched -DORE_BUILD_APP to ON
+
+    - name: Save executables as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ore-exe-windows-${{ matrix.arch }}
+        path: C:\local\ore\build\App\Release\ore.exe

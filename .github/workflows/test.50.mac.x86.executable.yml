@@ -1,0 +1,40 @@
+name: Build 50 - ORE MacOS x86-64 Executable
+
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Eigen
+      run: |
+        brew install eigen
+    - name: Install Boost
+      run: |
+        brew install boost
+        cd /usr/local/lib
+        ln -s libboost_thread-mt.dylib libboost_thread.dylib
+        ln -s libboost_thread-mt.a libboost_thread.a
+    - name: Build ORE
+      run: |
+        pwd
+        tar xfz ore.tgz
+        #cp exchangerate.hpp ore/QuantLib/ql
+        #tar xfz oreswig.tgz
+        #cp setup.py oreswig/OREAnalytics-SWIG/Python/setup.py
+        #cp oreanalytics-config.macos
+        cd ore
+        mkdir build
+        cd build
+        cmake -DORE_USE_ZLIB=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=ON -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DQL_ENABLE_SESSIONS=ON -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . -j4
+        cmake --install .
+    - name: Find File Path
+      run: |
+        file_path=$(find . -name 'ore.exe')
+        echo "Found file at path: $file_path"
+    - name: Save executables as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ore-exe-macos-x86_64
+        path: "$file_path"

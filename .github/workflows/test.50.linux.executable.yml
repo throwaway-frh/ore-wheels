@@ -1,0 +1,47 @@
+name: Build 50 - Linux Executable - cmake x86_64
+on: workflow_dispatch
+jobs:
+  wheels-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 10
+    - name: Build Boost
+      env:
+        BOOST_LIB: /home/runner/boost_1_78/boost/boost/lib
+        BOOST_INC: /home/runner/boost_1_78/boost/boost/include/boost
+        BOOST_INCLUDE_DIR: /home/runner/boost_1_78/boost/boost/include/boost
+      uses: MarkusJx/install-boost@v2.4.4
+      id: install-boost
+      with:
+        boost_version: 1.78.0
+        boost_install_dir: /home/runner/boost_1_78
+        platform_version: 20.04
+        toolset: gcc
+        arch: x86
+    - name: Check Boost path
+      run: |
+        pwd
+        cd /home/runner/boost_1_78/
+        # dir -R
+    - name: Unpack ORE
+      run: |
+        pwd
+        ./unpack_ore_linux.sh
+    - name: Build ORE
+      run: |
+        pwd
+        cd ore
+        mkdir build
+        cd build
+        cmake -DBOOST_ROOT=/home/runner/boost_1_78/boost/boost/ -DQL_ENABLE_SESSIONS=ON ..
+        make -j4
+        dir /home/runner/work/ore-wheels/ore-wheels/ore/build/App/ -R
+    - name: Save wheels as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: executable-ubuntu-x86_64
+        path:  /home/runner/work/ore-wheels/ore-wheels/ore/build/App/Release/ore
