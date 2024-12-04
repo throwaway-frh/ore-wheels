@@ -6,9 +6,9 @@ jobs:
     strategy:
       matrix:
         include:
-          #- arch: x86
-          #  platform: Win32
-          #  boost-lib: 32
+          - arch: x86
+            platform: Win32
+            boost-lib: 32
           - arch: AMD64
             platform: x64
             boost-lib: 64
@@ -63,10 +63,10 @@ jobs:
         ORE_DIR: C:\local\ore
         ORE_STATIC_RUNTIME: 1
         ORE_USE_ZLIB: 1
-        #CIBW_SKIP: cp36-* cp37-* cp
+        CIBW_SKIP: cp36-* cp37-* cp
         #CIBW_BUILD: cp37-win_amd64
         #CIBW_BUILD: cp38-win32
-        CIBW_BUILD: cp310-* cp39-* cp311-*
+        #CIBW_BUILD: cp310-* cp39-* cp311-*
         CIBW_ARCHS_WINDOWS: ${{ matrix.arch }}
         CIBW_BUILD_VERBOSITY: 2
       with:
