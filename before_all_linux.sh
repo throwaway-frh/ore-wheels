@@ -30,7 +30,7 @@ echo "XYZ END unpack zlib"
 
 echo "XYZ BEGIN unpack boost"
 # Setup Boost
-curl -O -L https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz
+curl -O -L https://archives.boost.io/release/1.80.0/source/boost_1_80_0.tar.gz
 tar xfz boost_1_80_0.tar.gz
 cd boost_1_80_0
 export Eigen3_DIR=$CURRENT_DIR/eigen-3.4.0
