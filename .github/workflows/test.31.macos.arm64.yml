@@ -4,16 +4,19 @@ jobs:
   wheels-macos:
     runs-on: macos-13
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 #    - name: Install Zlib
 #      run: |
 #        brew install zlib
     - name: Install Eigen
       run: |
         brew install eigen
+    - name: Install Swig
+      run: |
+        brew install swig
     - name: Build Boost
       run: |
-        curl -O -L https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.gz
+        curl -O -L https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz
         tar xfz boost_1_84_0.tar.gz
         cd boost_1_84_0
         ./bootstrap.sh
@@ -21,6 +24,7 @@ jobs:
     - name: Build ORE
       run: |
         pwd
+        python -m pip install setuptools
         tar xfz ore.tgz
         #cp exchangerate.hpp ore/QuantLib/ql
         tar xfz oreswig.tgz
@@ -33,10 +37,10 @@ jobs:
         cmake --build . -j4
         cmake --install .
     - name: Build ORE wheels
-      uses: pypa/cibuildwheel@v2.16.2
+      uses: pypa/cibuildwheel@v2.22.0
       env:
-        CIBW_SKIP: cp36-*
-        #CIBW_BUILD: cp310-macosx_arm64
+        #CIBW_SKIP: cp36-*
+        CIBW_BUILD: cp313-macosx*
         #CIBW_BUILD: cp311-macosx_arm64
         CIBW_ARCHS_MACOS: arm64
         CXXFLAGS: -std=c++17 -g0 -O3
@@ -47,7 +51,7 @@ jobs:
       with:
         package-dir: oreswig/OREAnalytics-SWIG/Python
     - name: Save wheels as artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels-macos-arm64
         path: ./wheelhouse/*.whl
