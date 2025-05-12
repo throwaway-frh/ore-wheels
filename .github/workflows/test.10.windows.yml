@@ -78,7 +78,7 @@ jobs:
         cd C:\local\ore\ORE-SWIG
         python setup.py wrap
     - name: Build ORE wheels
-      uses: pypa/cibuildwheel@v2.16.5
+      uses: pypa/cibuildwheel@v2.22.0
       env:
         BOOST_ROOT: C:\local\boost
         BOOST_LIB64: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
@@ -96,7 +96,7 @@ jobs:
       with:
         package-dir: C:\local\ore\ORE-SWIG
     - name: Save wheels as artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels-windows-${{ matrix.arch }}
         path: ./wheelhouse/*.whl
