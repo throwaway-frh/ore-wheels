@@ -4,6 +4,7 @@ jobs:
   wheels-windows:
     runs-on: windows-2022
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: x86
@@ -81,8 +82,8 @@ jobs:
       uses: pypa/cibuildwheel@v2.22.0
       env:
         BOOST_ROOT: C:\local\boost
-        BOOST_LIB64: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
-        BOOST_LIB32: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
+        BOOST_LIB64: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
+        BOOST_LIB32: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
         BOOST: C:\local\boost
         ORE_DIR: C:\local\ore
         ORE_STATIC_RUNTIME: 1
