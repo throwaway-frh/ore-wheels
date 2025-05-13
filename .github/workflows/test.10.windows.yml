@@ -50,7 +50,7 @@ jobs:
         cmake ..
     - name: Build Boost
       run: |
-        $Url = "https://archives.boost.io/release/1.80.0/binaries/boost_1_80_0-msvc-14.2-${{ matrix.boost-lib }}.exe"
+        $Url = "https://archives.boost.io/release/1.80.0/binaries/boost_1_80_0-msvc-14.3-${{ matrix.boost-lib }}.exe"
         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
         Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=C:\local\boost"
         choco install -y ninja
@@ -73,17 +73,17 @@ jobs:
         SET BOOST=C:\local\boost
         SET Boost_ROOT=C:\local\boost
         SET BOOST_INCLUDEDIR=C:\local\boost
-        SET BOOST_LIBRARYDIR=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
-        SET BOOST_LIB64=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
-        SET BOOST_LIB32=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
+        SET BOOST_LIBRARYDIR=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
+        SET BOOST_LIB64=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
+        SET BOOST_LIB32=C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
         cd C:\local\ore\ORE-SWIG
         python setup.py wrap
     - name: Build ORE wheels
       uses: pypa/cibuildwheel@v2.22.0
       env:
         BOOST_ROOT: C:\local\boost
-        BOOST_LIB64: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
-        BOOST_LIB32: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.2
+        BOOST_LIB64: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
+        BOOST_LIB32: C:\local\boost\lib${{ matrix.boost-lib }}-msvc-14.3
         BOOST: C:\local\boost
         ORE_DIR: C:\local\ore
         ORE_STATIC_RUNTIME: 1
