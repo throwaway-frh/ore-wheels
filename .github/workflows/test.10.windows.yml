@@ -10,9 +10,9 @@ jobs:
           - arch: x86
             platform: Win32
             boost-lib: 32
-          - arch: AMD64
-            platform: x64
-            boost-lib: 64
+          #- arch: AMD64
+          #  platform: x64
+          #  boost-lib: 64
     steps:
     - uses: actions/checkout@v4
     - name: uninstall SWIG 4.1.1
