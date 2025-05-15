@@ -4,7 +4,7 @@ jobs:
   wheels-linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
@@ -19,7 +19,7 @@ jobs:
         chmod +x ./before_all_linux.sh
         ./unpack_ore_linux.sh
     - name: Build ORE wheels
-      uses: pypa/cibuildwheel@v2.16.2
+      uses: pypa/cibuildwheel@v2.22.0
       env:
         CIBW_BUILD: "*-manylinux*"
         CIBW_SKIP: cp*
@@ -30,9 +30,9 @@ jobs:
         CIBW_ENVIRONMENT_LINUX: CXXFLAGS="-std=c++17 -O3 -g0" ORE=/project/ore
         CIBW_ENVIRONMENT_PASS_LINUX: CXXFLAGS
       with:
-        package-dir: /home/runner/work/ore-wheels/ore-wheels/oreswig/OREAnalytics-SWIG/Python
+        package-dir: /home/runner/work/ore-wheels/ore-wheels/ore/ore-swig
     - name: Save wheels as artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels-linux-manylinux-x86_64
         path: ./wheelhouse/*.whl
