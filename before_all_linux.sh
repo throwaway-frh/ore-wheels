@@ -50,3 +50,8 @@ cmake --build . -j4
 cmake --install .
 echo "XYZ END unpack ORE"
 
+echo "XYZ BEGIN wrap ore-swig"
+cd ore
+cd ore-swig
+python setup.py wrap
+echo "XYZ END wrap ore-swig"
