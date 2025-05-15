@@ -10,7 +10,7 @@ echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 # Unpack ORE & ORE-SWIG
 tar xfz ore.tgz
 #cp exchangerate.hpp ore/QuantLib/ql
-tar xfz oreswig.tgz
+#tar xfz oreswig.tgz
 #cp setup.py oreswig/OREAnalytics-SWIG/Python/setup.py
-cp oreanalytics-config.linux oreswig/OREAnalytics-SWIG/oreanalytics-config
+cp oreanalytics-config.linux ore/ore-swig/oreanalytics-config
 
