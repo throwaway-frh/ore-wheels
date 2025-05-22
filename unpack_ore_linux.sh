@@ -14,7 +14,7 @@ echo "@@@@@@@@@@@@@@@@@@@ END ORE-WHEELS @@@@@@@@@@@@@@@@@@@@@@@@"
 cd ore
 ls
 echo "@@@@@@@@@@@@@@@@@@@ END ORE @@@@@@@@@@@@@@@@@@@@@@@@"
-cd ore-swig
+cd ORE-SWIG
 echo "@@@@@@@@@@@@@@@@@@@ END ORE-SWIG @@@@@@@@@@@@@@@@@@@@@@@@"
 cd ..
 cd ..
