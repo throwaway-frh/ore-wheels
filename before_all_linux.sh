@@ -51,7 +51,8 @@ cmake --install .
 echo "XYZ END unpack ORE"
 
 echo "XYZ BEGIN wrap ore-swig"
-cd ore
+pwd
+cd ..
 cd ORE-SWIG
 python setup.py wrap
 echo "XYZ END wrap ore-swig"
