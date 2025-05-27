@@ -11,6 +11,10 @@ jobs:
     - name: Install Eigen
       run: |
         brew install eigen
+    - name: Install Swig
+      run: |
+        brew install swig
+        swig -version
     - name: Install Boost
       run: |
         brew install boost
