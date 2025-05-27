@@ -22,19 +22,22 @@ jobs:
         pwd
         tar xfz ore.tgz
         #cp exchangerate.hpp ore/QuantLib/ql
-        tar xfz oreswig.tgz
+        #tar xfz oreswig.tgz
         #cp setup.py oreswig/OREAnalytics-SWIG/Python/setup.py
-        cp oreanalytics-config.macos oreswig/OREAnalytics-SWIG/oreanalytics-config
+        cp oreanalytics-config.macos ore/ORE-SWIG/oreanalytics-config
         cd ore
         mkdir build
         cd build
-        cmake -DORE_USE_ZLIB=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DQL_ENABLE_SESSIONS=ON -DCMAKE_BUILD_TYPE=Release ..
+        cmake -DORE_USE_ZLIB=ON -DORE_BUILD_DOC=OFF -DORE_BUILD_EXAMPLES=OFF -DORE_BUILD_SWIG=OFF -DORE_BUILD_TESTS=OFF -DORE_BUILD_APP=OFF -DQL_BUILD_BENCHMARK=OFF -DQL_BUILD_EXAMPLES=OFF -DQL_BUILD_TEST_SUITE=OFF -DQL_ENABLE_SESSIONS=ON -DCMAKE_BUILD_TYPE=Release ..
         cmake --build . -j4
         cmake --install .
+        cd ..
+        cd ORE-SWIG
+        python setup.py wrap
     - name: Build ORE wheels
       uses: pypa/cibuildwheel@v2.17
       env:
-        CIBW_SKIP: cp36-*
+        CIBW_SKIP: cp36-* cp37-*
         #CIBW_BUILD: cp310-macosx_x86_64
         #CIBW_BUILD: cp311-macosx_x86_64
         CIBW_ARCHS_MACOS: x86_64
