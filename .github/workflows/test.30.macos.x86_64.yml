@@ -4,7 +4,7 @@ jobs:
   wheels-macos:
     runs-on: macos-13
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 #    - name: Install Zlib
 #      run: |
 #        brew install zlib
@@ -33,15 +33,15 @@ jobs:
         cmake --install .
         cd ..
         cd ORE-SWIG
-        python setup.py wrap
+        python3 setup.py wrap
     - name: Build ORE wheels
-      uses: pypa/cibuildwheel@v2.17
+      uses: pypa/cibuildwheel@v2.22.0
       env:
         CIBW_SKIP: cp36-* cp37-*
         #CIBW_BUILD: cp310-macosx_x86_64
         #CIBW_BUILD: cp311-macosx_x86_64
         CIBW_ARCHS_MACOS: x86_64
-        CXXFLAGS: -std=c++17 -g0 -O3 -mmacosx-version-min=10.15
+        CXXFLAGS: -std=c++17 -g0 -O3 -mmacosx-version-min=13.7
         CIBW_BUILD_VERBOSITY: 2
         CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
           DYLD_LIBRARY_PATH=/usr/local/lib delocate-listdeps {wheel} &&
@@ -49,7 +49,7 @@ jobs:
       with:
         package-dir: oreswig/OREAnalytics-SWIG/Python
     - name: Save wheels as artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: wheels-macos-x86_64
         path: ./wheelhouse/*.whl
