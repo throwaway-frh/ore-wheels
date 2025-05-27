@@ -22,6 +22,7 @@ jobs:
         #cp exchangerate.hpp ore/QuantLib/ql
         #tar xfz oreswig.tgz
         #cp setup.py oreswig/OREAnalytics-SWIG/Python/setup.py
+        python -m pip install setuptools
         cp oreanalytics-config.macos ore/ORE-SWIG/oreanalytics-config
         cd ore
         mkdir build
@@ -31,7 +32,7 @@ jobs:
         cmake --install .
         cd ..
         cd ORE-SWIG
-        python3 setup.py wrap
+        python setup.py wrap
     - name: Build ORE wheels
       uses: pypa/cibuildwheel@v2.22.0
       env:
